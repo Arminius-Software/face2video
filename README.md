@@ -16,7 +16,7 @@ To install all other dependencies and set up all the needed folders, simply run 
 
 1. Put your target video in the input_videos folder and your face images into the input_faces folder (the script has been tested with .mp4, .png, and .jpg files).
 2. Go into the main.py file and put the name of your face input file and video input file into the path_input_face and path_input_video variables.
-3. Run main.py.
+3. Run main.py. (Automatic 1111 has to be running for this step to work)
 
 ### Limitations
 
