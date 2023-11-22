@@ -24,8 +24,6 @@ def api_change_face(file, face_image, input_image):
   path = os.path.join(current_directory, "finished_frames/")
   result_path = os.path.join(path, file)
 
-  print(input_image)
-
   payload = {
     "source_image": base64_image_face,
     "target_image": base64_image,
