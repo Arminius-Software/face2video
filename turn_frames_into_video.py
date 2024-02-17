@@ -41,7 +41,8 @@ def create_video(folder_path):
     current_datetime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     video_name = 'finished_videos/output_video_{}.mp4'.format(current_datetime)
 
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+
     out = cv2.VideoWriter(video_name, fourcc, 30, (width, height))
 
     for image in images:

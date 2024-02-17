@@ -13,10 +13,13 @@ import os
 class Face2Video():
 
     def __init__(self):
+
         self.input_face = ""
         self.input_video = ""
+        self.processing_unit = "GPU (CUDA)"
 
     def append_output(self, text):
+
         text = f"{text} \n"
         output_text.config(state=tk.NORMAL)
         output_text.insert(tk.END, text)
@@ -37,6 +40,15 @@ class Face2Video():
             else:
                 self.input_video = directory_path.name
 
+    def change_processing_unit(self):
+
+        if self.processing_unit == "GPU (CUDA)":
+            self.processing_unit = "CPU"
+        else:
+            self.processing_unit = "GPU (CUDA)"
+
+        self.append_output("Automatic1111 needs to be restarted after changing the \nprocessing unit for changes to apply!")
+
     def split_video(self):
 
         if self.input_video == "":
@@ -48,17 +60,20 @@ class Face2Video():
             self.append_output("Ready to swap face")
 
     def start_split_video_thread(self):
+
         thread = threading.Thread(target=self.split_video)
         thread.start()
 
     def swap_face(self):
+
         if self.input_video == "" or self.input_face == "":
             self.append_output("Select a face and a video")
         else:
             files = os.listdir("extracted_frames/")
+
             for index, file in enumerate(files):
                 file_path = os.path.join("extracted_frames/", file)
-                automatic1111_api.api_change_face(file, self.input_face, file_path)
+                automatic1111_api.api_change_face(file, self.input_face, file_path, self.processing_unit)
                 self.append_output(f"Finished image {index + 1} of {len(files)}")
             self.append_output("Finished swapping faces")
             self.append_output("Ready to merge frames")
@@ -101,7 +116,7 @@ class Face2Video():
 
 root = tk.Tk()
 root.title("Face2Video")
-root.geometry("800x600") 
+root.geometry("800x700") 
 
 dark_background_color = "#333333" 
 text_color = "white"  
@@ -116,13 +131,16 @@ button_height = 2
 new_video = Face2Video()
 
 header_label = tk.Label(root, text="Face2Video - Easy Faceswapping", font=("Helvetica", 20, "bold"), fg=text_color, bg=dark_background_color)
-header_label.pack(pady=15)
+header_label.pack(pady=20)
 
 select_face_button = tk.Button(root, text="Choose Face", command=lambda: new_video.open_file_dialog("input_faces/", True), font=("Helvetica", 12), width=file_button_width, height=file_button_height, bg=dark_background_color, fg=text_color)
 select_face_button.pack(pady=5)
 
 select_video_button = tk.Button(root, text="Choose Video", command=lambda: new_video.open_file_dialog("input_videos/", False), font=("Helvetica", 12), width=file_button_width, height=file_button_height, bg=dark_background_color, fg=text_color)
 select_video_button.pack(pady=5)
+
+processing_unit_button = tk.Button(root, text=f"Selected: {new_video.processing_unit}", command=lambda: update_button(), font=("Helvetica", 14), width=button_width, height=button_height, bg=dark_background_color, fg=text_color)
+processing_unit_button.pack(pady=5)
 
 split_button = tk.Button(root, text="Split Video Into Frames", command=lambda: new_video.start_split_video_thread(), font=("Helvetica", 14), width=button_width, height=button_height, bg=dark_background_color, fg=text_color)
 split_button.pack(pady=5)
@@ -136,6 +154,10 @@ merge_button.pack(pady=5)
 output_text = tk.Text(root, height=10, width=50, font=("Helvetica", 12), bg=dark_background_color, fg=text_color, state=tk.DISABLED)
 output_text.pack(pady=10)
 
+def update_button():
+
+    new_video.change_processing_unit()
+    processing_unit_button.config(text=f"Selected: {new_video.processing_unit}")
 
 if __name__ == "__main__":
     root.mainloop()
