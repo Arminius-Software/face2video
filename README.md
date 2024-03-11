@@ -4,11 +4,11 @@ This script automates the process of applying face swap to videos using Automati
 
 ### How to install
 
-You will need working installations of both Automatic 1111 and Reactor for this script to work.
-- [Automatic 1111](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
+You will need working installations of both Automatic 1111 (or Forge) and Reactor for this script to work.
+- [Automatic 1111](https://github.com/AUTOMATIC1111/stable-diffusion-webui) / [Forge](https://github.com/lllyasviel/stable-diffusion-webui-forge) 
 - [Reactor](https://github.com/Gourieff/sd-webui-reactor)
 
-The Automatic 1111 API needs to be enabled. Add "--api" to the COMMANDLINE_ARGS in the webui-user.bat file in the Automatic 1111 directory.
+The Automatic 1111 (or Forge) API needs to be enabled. Add "--api" to the COMMANDLINE_ARGS in the webui-user.bat file in the Automatic 1111 directory.
 
 To install all other dependencies and set up all the needed folders, simply run the install.py script once.
 
