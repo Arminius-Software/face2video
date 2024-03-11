@@ -18,7 +18,7 @@ To install all other dependencies and set up all the needed folders, simply run 
 2. Run the main.py file to start the gui.  
 3. Click on "Choose Face" and then on "Choose Video" and select the files you want to use from the input folders.
 4. Click on "Split Video Into Frames". 
-5. Click on "Swap Face". (Automatic 1111 has to be running for this step to work)
+5. Click on "Swap Face". (Automatic 1111 (or Forge) has to be running for this step to work)
 6. Click on "Merge Frames Into Video".
 7. Your finished video file will be in the finished_videos folder.
 
