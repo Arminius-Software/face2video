@@ -1,6 +1,6 @@
 # face2video
 
-This script automates the process of applying face swap to videos using Automatic 1111 with the Reactor extension. The video is split into frames, which are edited using Reactor, and then merged back into a video. Sound is also copied in the process. This script was created because the manual process was rather tedious to do otherwise.
+This script automates the process of applying face swap to videos using Automatic 1111 (or Forge) with the Reactor extension. The video is split into frames, which are edited using Reactor, and then merged back into a video. Sound is also copied in the process. This script was created because the manual process was rather tedious to do otherwise.
 
 ### How to install
 
@@ -8,7 +8,7 @@ You will need working installations of both Automatic 1111 (or Forge) and Reacto
 - [Automatic 1111](https://github.com/AUTOMATIC1111/stable-diffusion-webui) / [Forge](https://github.com/lllyasviel/stable-diffusion-webui-forge) 
 - [Reactor](https://github.com/Gourieff/sd-webui-reactor)
 
-The Automatic 1111 (or Forge) API needs to be enabled. Add "--api" to the COMMANDLINE_ARGS in the webui-user.bat file in the Automatic 1111 directory.
+The Automatic 1111 (or Forge) API needs to be enabled. Add "--api" to the COMMANDLINE_ARGS in the webui-user.bat file in the Automatic 1111 (or Forge) directory.
 
 To install all other dependencies and set up all the needed folders, simply run the install.py script once.
 
