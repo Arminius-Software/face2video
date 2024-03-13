@@ -2,7 +2,7 @@
 
 This script automates the process of applying face swap to videos using Automatic 1111 with the Reactor extension. The video is split into frames, which are edited using Reactor, and then merged back into a video. Sound is also copied in the process. This script was created because the manual process was rather tedious to do otherwise.
 
-You can also use ForgeUI instead of Automatic 1111
+You can also use ForgeUI instead of Automatic 1111.
 
 ### How to install
 
