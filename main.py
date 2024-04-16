@@ -1,202 +1,199 @@
-import get_frames_from_video
-import turn_frames_into_video
-import copy_sound_from_video
-import automatic1111_api
-
 import tkinter as tk
-from tkinter import filedialog
-
-import threading
+from tkinter import PhotoImage
+from PIL import Image, ImageTk
 import os
+import random
+from settings import *
 
 
-class Face2Video():
+"""
 
-    def __init__(self):
+todo:
+make random if 5 real 4 fake or 5 real 4 fake
+add button to game over screen that opens matplotlib plot with images and shows if true/false 2x2 plot
+find images for real images
 
-        self.input_face = ""
-        self.input_video = ""
-        self.processing_unit = "GPU (CUDA)"
-        self.input_type = "Single Image"
+"""
 
-    def append_output(self, text):
+class GUIApp():
 
-        text = f"{text} \n"
-        output_text.config(state=tk.NORMAL)
-        output_text.insert(tk.END, text)
-        output_text.config(state=tk.DISABLED)
-        output_text.see(tk.END)
+    def __init__(self, root):
 
-    def open_file_dialog_face(self):
-        
-        if self.input_type == "Single Image":
-            path = "input_faces/"
+        self.root = root
+        self.score = 0
+        self.image_paths = []
+        self.modus = ""
+        self.init_screen()
+
+    def init_screen(self):
+
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+        self.root.title("Echt oder KI?")
+        self.root.geometry("550x400") 
+        self.root.configure(bg=dark_background_color)
+
+        header_label = tk.Label(self.root, text="Echt oder KI?", font=("Helvetica", 20, "bold"), fg=text_color, bg=dark_background_color)
+        header_label.pack(pady=20)
+
+        select_humans_button = tk.Button(self.root, text="Menschen", command=lambda: self.start_game("Menschen"), font=("Helvetica", 12), width=30, height=2, bg=dark_background_color, fg=text_color)
+        select_humans_button.pack(pady=10)
+
+        select_animals_button = tk.Button(self.root, text="Tiere", command=lambda: self.start_game("Tiere"), font=("Helvetica", 12), width=30, height=2, bg=dark_background_color, fg=text_color)
+        select_animals_button.pack(pady=10)
+
+        select_landscapes_button = tk.Button(self.root, text="Landschaften", command=lambda: self.start_game("Landscapes"), font=("Helvetica", 12), width=30, height=2, bg=dark_background_color, fg=text_color)
+        select_landscapes_button.pack(pady=10)
+
+    def get_images(self, modus):
+
+        # choose path
+
+        if modus == "Menschen":
+            path = "Humans/"
+        elif modus == "Tiere":
+            path = "Animals/"
         else:
-            path = "input_faces_models"
-        
-        current_directory = os.path.dirname(os.path.abspath(__file__))
-        initial_directory = os.path.join(current_directory, path)
-        
-        directory_path = filedialog.askopenfile(initialdir=initial_directory)
-        if directory_path:
-            file_name = os.path.basename(directory_path.name)
-            self.append_output(f"Selected {file_name}")
-            self.input_face = directory_path.name
+            path = "Landscapes/"
 
-    def open_file_dialog_video(self):
+        # choose if 4 real and 5 fake or 5 real and 4 fake at random
 
-        path = "input_videos/"
-        
-        current_directory = os.path.dirname(os.path.abspath(__file__))
-        initial_directory = os.path.join(current_directory, path)
-        
-        directory_path = filedialog.askopenfile(initialdir=initial_directory)
-        if directory_path:
-            file_name = os.path.basename(directory_path.name)
-            self.append_output(f"Selected {file_name}")
-            self.input_video = directory_path.name
+        more_images = random.choice(["real", "fake"])
 
-    def change_processing_unit(self):
+        # get fakes
 
-        if self.processing_unit == "GPU (CUDA)":
-            self.processing_unit = "CPU"
+        image_paths = []
+
+        path_to_fake = os.path.join(path, "fake/")
+
+        path_to_fake = os.path.join(os.getcwd(), path_to_fake)
+        images_in_folder = []
+        for f in os.listdir(path_to_fake): 
+            if os.path.isfile(os.path.join(path_to_fake, f)):
+                images_in_folder.append((False, os.path.join(path_to_fake, f)))
+
+        if more_images == "fake":
+            image_paths.extend(random.sample(images_in_folder, 5))
         else:
-            self.processing_unit = "GPU (CUDA)"
+            image_paths.extend(random.sample(images_in_folder, 4))
 
-        self.append_output("Automatic1111 needs to be restarted after changing the \nprocessing unit for changes to apply!")
+        # get real images
 
-    def change_input_type(self):
+        path_to_real = os.path.join(path, "real/")
 
-        if self.input_type == "Single Image":
-            self.input_type = "Face Model"
+        path_to_real = os.path.join(os.getcwd(), path_to_real)
+        images_in_folder = []
+        for f in os.listdir(path_to_real): 
+            if os.path.isfile(os.path.join(path_to_real, f)):
+                images_in_folder.append((True, os.path.join(path_to_real, f)))
+
+        if more_images == "real":
+            image_paths.extend(random.sample(images_in_folder, 5))
         else:
-            self.input_type = "Single Image"
+            image_paths.extend(random.sample(images_in_folder, 4))
 
-    def split_video(self):
+        random.shuffle(image_paths)
 
-        if self.input_video == "":
-            self.append_output("No video selected")
+        self.image_paths = image_paths
+
+    def start_game(self, modus):
+
+        if modus == "Menschen":
+            self.get_images("Menschen")
+            self.modus = "Menschen"
+        elif modus == "Tiere":
+            self.get_images("Tiere")
+            self.modus = "Tiere"
         else:
-            self.append_output("Splitting video into frames...")
-            get_frames_from_video.get_frames(self.input_video)
-            self.append_output("Finished splitting video into frames")
-            self.append_output("Ready to swap face")
+            self.get_images("Landschaften")
+            self.modus = "Landschaften"
 
-    def start_split_video_thread(self):
+        self.game_screen()
 
-        thread = threading.Thread(target=self.split_video)
-        thread.start()
+    def button_real(self, fake_or_real):
 
-    def swap_face(self):
+        if fake_or_real:
+            self.score += 1
 
-        if self.input_video == "" or self.input_face == "":
-            self.append_output("Select a face and a video")
+        self.game_button_pressed()
+
+    def button_fake(self, fake_or_real):
+
+        if not fake_or_real:
+            self.score += 1
+
+        self.game_button_pressed()
+
+    def game_button_pressed(self):
+        
+        self.image_paths = self.image_paths[1:]
+
+        if len(self.image_paths) == 0:
+            self.game_over_screen()
         else:
-            files = os.listdir("extracted_frames/")
+            self.game_screen()
 
-            if self.input_type == "Single Image":
-                source_choice = 0
-                input_model = ""
-            else:
-                source_choice = 1
-                input_model = self.input_face
-                self.input_face = ""
+    def game_screen(self):
 
-            for index, file in enumerate(files):
-                file_path = os.path.join("extracted_frames/", file)
-                automatic1111_api.api_change_face(file, self.input_face, input_model, file_path, self.processing_unit, source_choice)
-                self.append_output(f"Finished image {index + 1} of {len(files)}")
-            self.append_output("Finished swapping faces")
-            self.append_output("Ready to merge frames")
+        # Clear the initial screen widgets
+        for widget in self.root.winfo_children():
+            widget.destroy()
 
-    def start_swap_face_thread(self):
-        thread = threading.Thread(target=self.swap_face)
-        thread.start()
+        # Update the main window for the game
+        self.root.title("Ratespiel")
+        self.root.geometry("800x700")
 
-    def delete_old_frames(self):
+        label = tk.Label(self.root, text=f"{self.modus}: Echt oder KI?", font=("Helvetica", 16, "bold"), fg=text_color, bg=dark_background_color)
+        label.pack(pady=20)
 
-        paths = ["extracted_frames/", "finished_frames/"]
+        # Load and display image
+        path_to_image = self.image_paths[0][1]
+        pil_image = Image.open(path_to_image)
+        resized_image = pil_image.resize((512, 512), Image.Resampling.LANCZOS)
+        image = ImageTk.PhotoImage(resized_image)
+        image_label = tk.Label(self.root, image=image, bg=dark_background_color)
+        image_label.image = image  # Keep a reference!
+        image_label.pack(pady=20)
 
-        for path in paths:
-            if os.path.exists(path):
-                files = os.listdir(path)
-                
-                for file in files:
-                    file_path = os.path.join(path, file)
-                    if os.path.isfile(file_path):
-                        os.remove(file_path)
-                    else:
-                        print(f"Skipped {file_path} as it's not a file.")
-            else:
-                print(f"The folder path '{path}' does not exist.")
+        # Create buttons
+        button_frame = tk.Frame(self.root, bg=dark_background_color)
+        button_frame.pack(pady=10)
 
-    def merge_video(self):
+        fake_or_real = self.image_paths[0][0]
 
-        self.append_output("Creating video...")
-        file_name_video = turn_frames_into_video.create_video("finished_frames/")
-        self.append_output("Adding sound...")
-        copy_sound_from_video.add_sound(self.input_video,file_name_video)
-        self.append_output("Finished creating video!")
+        btn1 = tk.Button(button_frame, text="Echt", command=lambda: instance.button_real(fake_or_real), font=("Helvetica", 12), width=30, height=2, bg=dark_background_color, fg=text_color)
+        btn2 = tk.Button(button_frame, text="Fake", command=lambda: instance.button_fake(fake_or_real), font=("Helvetica", 12), width=30, height=2, bg=dark_background_color, fg=text_color)
 
-        self.delete_old_frames()
+        btn1.pack(side=tk.LEFT, padx=5)
+        btn2.pack(side=tk.LEFT, padx=5)
 
-    def start_merge_video_thread(self):
-        thread = threading.Thread(target=self.merge_video)
-        thread.start()       
+    def game_over_screen(self):
+        
+        for widget in self.root.winfo_children():
+            widget.destroy()
 
+        self.root.title("Ratespiel")
+        self.root.geometry("550x400") 
 
-root = tk.Tk()
-root.title("Face2Video")
-root.geometry("800x800") 
+        label = tk.Label(self.root, text=f"Spiel beendet", font=("Helvetica", 16, "bold"), fg=text_color, bg=dark_background_color)
+        label.pack(pady=20)
 
-dark_background_color = "#333333" 
-text_color = "white"  
-root.configure(bg=dark_background_color)
+        label_score = tk.Label(self.root, text=f"Punkte: {self.score}/9", font=("Helvetica", 16, "bold"), fg=text_color, bg=dark_background_color)
+        label_score.pack(pady=20)
 
-file_button_width = 20
-file_button_height = 2
+        select_animals_button = tk.Button(self.root, text="Echte Ergebnisse anzeigen", command="", font=("Helvetica", 12), width=30, height=2, bg=dark_background_color, fg=text_color)
+        select_animals_button.pack(pady=10)
 
-button_width = 30
-button_height = 2
+        select_landscapes_button = tk.Button(self.root, text="Zurück zum Hauptmenü", command=lambda: self.init_screen(), font=("Helvetica", 12), width=30, height=2, bg=dark_background_color, fg=text_color)
+        select_landscapes_button.pack(pady=10)
 
-new_video = Face2Video()
-
-header_label = tk.Label(root, text="Face2Video - Easy Faceswapping", font=("Helvetica", 20, "bold"), fg=text_color, bg=dark_background_color)
-header_label.pack(pady=20)
-
-processing_unit_button = tk.Button(root, text=f"Selected: {new_video.processing_unit}", command=lambda: update_button_processing_unit(), font=("Helvetica", 14), width=button_width, height=button_height, bg=dark_background_color, fg=text_color)
-processing_unit_button.pack(pady=5)
-
-input_type_button = tk.Button(root, text=f"Selected: {new_video.input_type}", command=lambda: update_button_input_type(), font=("Helvetica", 14), width=button_width, height=button_height, bg=dark_background_color, fg=text_color)
-input_type_button.pack(pady=5)
-
-select_face_button = tk.Button(root, text="Choose Face", command=lambda: new_video.open_file_dialog_face(), font=("Helvetica", 14), width=file_button_width, height=file_button_height, bg=dark_background_color, fg=text_color)
-select_face_button.pack(pady=5)
-
-select_video_button = tk.Button(root, text="Choose Video", command=lambda: new_video.open_file_dialog_video(), font=("Helvetica", 14), width=file_button_width, height=file_button_height, bg=dark_background_color, fg=text_color)
-select_video_button.pack(pady=5)
-
-split_button = tk.Button(root, text="Split Video Into Frames", command=lambda: new_video.start_split_video_thread(), font=("Helvetica", 14), width=button_width, height=button_height, bg=dark_background_color, fg=text_color)
-split_button.pack(pady=5)
-
-swap_button = tk.Button(root, text="Swap Face", command=lambda: new_video.start_swap_face_thread(), font=("Helvetica", 14), width=button_width, height=button_height, bg=dark_background_color, fg=text_color)
-swap_button.pack(pady=5)
-
-merge_button = tk.Button(root, text="Merge Frames Into Video", command=lambda: new_video.start_merge_video_thread(), font=("Helvetica", 14), width=button_width, height=button_height, bg=dark_background_color, fg=text_color)
-merge_button.pack(pady=5)
-
-output_text = tk.Text(root, height=10, width=50, font=("Helvetica", 12), bg=dark_background_color, fg=text_color, state=tk.DISABLED)
-output_text.pack(pady=10)
-
-def update_button_processing_unit():
-
-    new_video.change_processing_unit()
-    processing_unit_button.config(text=f"Selected: {new_video.processing_unit}")
-
-def update_button_input_type():
-
-    new_video.change_input_type()
-    input_type_button.config(text=f"Selected: {new_video.input_type}")
+        # reset stats
+        self.score = 0
+        self.image_paths = []
+        self.modus = ""
 
 if __name__ == "__main__":
+    root = tk.Tk()
+    instance = GUIApp(root)
     root.mainloop()
