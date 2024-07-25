@@ -13,7 +13,7 @@ def get_frames(path):
     success, image = vidcap.read()
     if success:
         count += 1
-        frame_path = f"extracted_frames/frame{count}.jpg"
+        frame_path = f"extracted_frames/frame{count}.png"
         cv2.imwrite(frame_path, image)
     else:
         print("Finished extracting frames from video")

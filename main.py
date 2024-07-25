@@ -16,7 +16,7 @@ class Face2Video():
 
         self.input_face = ""
         self.input_video = ""
-        self.processing_unit = "GPU (CUDA)"
+        self.processing_unit = "CPU"
         self.input_type = "Single Image"
 
     def append_output(self, text):
