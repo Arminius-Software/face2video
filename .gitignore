@@ -1,9 +1,3 @@
 #Input and output directories
 
-extracted_frames/
-finished_videos/
-finished_frames/
-input_faces/
-input_videos/
-
 .DS_Store
