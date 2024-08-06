@@ -28,7 +28,7 @@ def api_change_face(file, face_image, input_model, input_image, processing_unit,
         base64_image_face = face_image
 
     current_directory = os.getcwd()
-    path = os.path.join(current_directory, "finished_frames/")
+    path = os.path.join(current_directory, "extensions", "face2video", "finished_frames")
     result_path = os.path.join(path, file)
 
     payload = {
@@ -61,4 +61,4 @@ def api_change_face(file, face_image, input_model, input_image, processing_unit,
     response = requests.post(url=f'{url}/reactor/image', json=payload)
 
     # r = response.json()
-    # print("Response Code:", response.status_code)
+    # print("Response Code:", response.status_code, r)
