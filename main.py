@@ -104,7 +104,7 @@ class Face2Video():
                 self.input_face = ""
 
             for index, file in enumerate(files):
-                file_path = os.path.join(self.main_path, "/extracted_frames/", file)
+                file_path = os.path.join(self.main_path, "extracted_frames", file)
                 automatic1111_api.api_change_face(file, self.input_face, input_model, file_path, self.processing_unit, source_choice)
                 self.append_output(f"Finished image {index + 1} of {len(files)}")
             self.append_output("Finished swapping faces")
@@ -134,7 +134,7 @@ class Face2Video():
     def merge_video(self):
 
         self.append_output("Creating video...")
-        file_name_video = turn_frames_into_video.create_video(os.path.join(self.main_path, "/finished_frames/"))
+        file_name_video = turn_frames_into_video.create_video(os.path.join(self.main_path, "finished_frames"))
         self.append_output("Adding sound...")
         copy_sound_from_video.add_sound(self.input_video,file_name_video)
         self.append_output("Finished creating video!")
