@@ -4,6 +4,8 @@ This script automates the process of applying face swap to videos using Automati
 
 You can also use ForgeUI instead of Automatic 1111.
 
+Thanks to [abhishekvakharia](https://github.com/abhishekvakharia), we now also have a dedicated version for macOS. Just switch to the "Mac_version" branch.
+
 ### How to install
 
 You will need working installations of both Automatic 1111 and Reactor for this script to work.
