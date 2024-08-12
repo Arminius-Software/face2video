@@ -38,8 +38,12 @@ def create_video(folder_path):
     frame = cv2.imread(os.path.join(folder_path, images[0]))
     height, width, layers = frame.shape
 
+    current_directory = os.getcwd()
+    f_path = os.path.join(current_directory, "extensions", "face2video", "finished_videos")
+    os.chdir(f_path)
+
     current_datetime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    video_name = 'finished_videos/output_video_{}.mp4'.format(current_datetime)
+    video_name = 'output_video_{}.mp4'.format(current_datetime)
 
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
