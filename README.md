@@ -10,7 +10,7 @@ Thanks to [abhishekvakharia](https://github.com/abhishekvakharia), we now also h
 
 You will need working installations of both Automatic 1111 and Reactor for this script to work.
 - [Automatic 1111](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
-- [Reactor](https://github.com/Gourieff/sd-webui-reactor)
+- [Reactor](https://github.com/Gourieff/sd-webui-reactor-sfw)
 
 The Automatic 1111 API needs to be enabled. Add "--api" to the COMMANDLINE_ARGS in the webui-user.bat file in the Automatic 1111 directory.
 
