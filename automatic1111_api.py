@@ -58,7 +58,7 @@ def api_change_face(file, face_image, input_model, input_image, processing_unit,
 
     }
 
-    response = requests.post(url=f'{url}/reactor/image', json=payload)
+    response = requests.post(url=f'{url}/reactor/image', json=payload, timeout=30)
 
     # r = response.json()
     # print("Response Code:", response.status_code)
